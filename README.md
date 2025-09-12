@@ -19,22 +19,24 @@ graph TB
         AWS_EMAIL[AWS<br/>Email]
         PAYSTACK[Paystack<br/>Payments]
         AWS_S3[AWS<br/>S3 File Storage]
-
     end
 
     subgraph "Infrastructure"
         MYSQL[(MySQL<br/>Database)]
+        NOTIF_MYSQL[(Notification MySQL<br/>Database)]
         REDIS[(Redis<br/>Cache)]
     end
 
     API --> MYSQL
     MAIN --> MYSQL
-    NOTIF --> MYSQL
+    NOTIF --> NOTIF_MYSQL
     MAIN --> REDIS
+    MAIN --> AWS_S3
+    API --> AWS_S3
+    NOTIF --> AWS_S3
+    NOTIF --> AWS_EMAIL
     NOTIF --> FIREBASE
     MAIN --> PAYSTACK
-    MAIN --> AWS
-    NOTIF --> AWS
 ```
 
 ## 🚀 Core Services
