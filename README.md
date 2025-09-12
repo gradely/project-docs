@@ -9,17 +9,17 @@ Gradely's backend is built as a microservices architecture consisting of three c
 ```mermaid
 graph TB
     subgraph "Backend Services"
-        API[Gradely API v2<br/>PHP/Yii2<br/>Port: 8080]
-        MAIN[Gradely-2.1<br/>Go/Gin<br/>Port: 8081]
-        NOTIF[Notification Service<br/>Go/Gin<br/>Port: 8080/4000]
+        API[Gradely API v2<br/>PHP/Yii2]
+        MAIN[Gradely-2.1<br/>Go/Gin]
+        NOTIF[Notification Service<br/>Go/Gin]
     end
 
     subgraph "External Services"
         FIREBASE[Firebase<br/>Push Notifications]
-        TWILIO[Twilio<br/>SMS/WhatsApp]
-        TERMII[Termii<br/>SMS Nigeria]
+        AWS_EMAIL[AWS<br/>Email]
         PAYSTACK[Paystack<br/>Payments]
-        AWS[AWS S3<br/>File Storage]
+        AWS_S3[AWS<br/>S3 File Storage]
+
     end
 
     subgraph "Infrastructure"
@@ -27,15 +27,14 @@ graph TB
         REDIS[(Redis<br/>Cache)]
     end
 
-    API --> MAIN
-    MAIN --> NOTIF
+    API --> MYSQL
     MAIN --> MYSQL
+    NOTIF --> MYSQL
     MAIN --> REDIS
     NOTIF --> FIREBASE
-    NOTIF --> TWILIO
-    NOTIF --> TERMII
     MAIN --> PAYSTACK
     MAIN --> AWS
+    NOTIF --> AWS
 ```
 
 ## 🚀 Core Services
@@ -43,7 +42,7 @@ graph TB
 ### 1. [Gradely API v2](https://github.com/gradely/gradely-api) - Legacy API Service
 
 **Technology**: PHP 7.4+ with Yii2 Framework  
-**Port**: 8080  
+**Port**: Configurable via environment variable  
 **Purpose**: Legacy API endpoints and user authentication
 
 **Key Features**:
@@ -53,14 +52,16 @@ graph TB
 - Basic educational content management
 - User onboarding and profile management
 
-**Documentation**: [📚 API Docs](https://github.com/gradely/gradely-api) | [🔧 Swagger UI](http://localhost:8080/docs)
+**Documentation**: [📁 Repository](https://github.com/gradely/gradely-api) | [🔧 Swagger UI](http://localhost:<your-port>/docs)
+
+> **Note:** Replace `<your-port>` with the port configured in your environment variables for each service. The default ports are typically 8080 or 8081, but may vary depending on your setup.
 
 ---
 
 ### 2. [Gradely-2.1](https://github.com/gradely/gradely-2.1) - Main API Service
 
 **Technology**: Go with Gin Framework  
-**Port**: 8081  
+**Port**: Configurable via environment variable  
 **Purpose**: Core educational platform functionality
 
 **Key Features**:
@@ -75,14 +76,16 @@ graph TB
 - **AI Integration**: Adaptive learning recommendations
 - **Content Management**: Educational resources and libraries
 
-**Documentation**: [📚 API Docs](https://github.com/gradely/gradely-2.1) | [🔧 Swagger UI](http://localhost:8081/docs)
+**Documentation**: [📁 Repository](https://github.com/gradely/gradely-2.1) | [🔧 Swagger UI](http://localhost:<your-port>/docs)
+
+> **Note:** Replace `<your-port>` with the port configured in your environment variables for each service. The default ports are typically 8080 or 8081, but may vary depending on your setup.
 
 ---
 
 ### 3. [Notification Service v2.1](https://github.com/gradely/notification-v2.1) - Communication Service
 
 **Technology**: Go with Gin Framework  
-**Port**: 8080/4000 (configurable)  
+**Port**: Configurable via environment variable  
 **Purpose**: Multi-channel notification delivery
 
 **Key Features**:
@@ -95,15 +98,18 @@ graph TB
 - **Third-Party Integrations**: Twilio, Termii
 - **Background Processing**: Asynchronous notification delivery
 
-**Documentation**: [📚 API Docs](https://github.com/gradely/notification-v2.1) | [🔧 Swagger UI](http://localhost:8080/docs)
+**Documentation**: [📁 Repository](https://github.com/gradely/notification-v2.1) | [🔧 Swagger UI](http://localhost:<your-port>/docs)
+
+> **Note:** Replace `<your-port>` with the port configured in your environment variables for each service. The default ports are typically 8080 or 8081, but may vary depending on your setup.
 
 ## 🔄 Service Communication
 
 ### API Flow
 
-1. **Gradely API v2** → **Gradely-2.1** (Core functionality)
-2. **Gradely-2.1** → **Notification Service** (User notifications)
-3. **Gradely-2.1** → **External Services** (Payments, Storage, etc.)
+1. **All services** → **MySQL** (shared database)
+2. **Gradely-2.1** → **Redis** (caching/session management)
+3. **Gradely-2.1** → **Notification Service** (User notifications)
+4. **Gradely-2.1** → **External Services** (Payments, Storage, etc.)
 
 ### Integration Patterns
 
@@ -156,8 +162,8 @@ err := notification.SendNotification(config)
 
    ```bash
    cd gradely-2.1
-   cp config-sample.yml config.yml
-   # Edit config.yml with your settings
+   cp .env_services_sample .env
+   # Edit .env with your settings
    make dev  # Starts all services with Docker
    ```
 
@@ -165,8 +171,8 @@ err := notification.SendNotification(config)
 
    ```bash
    cd notification-v2.1
-   cp config-sample.yml config.yml
-   # Edit config.yml with your settings
+   cp .env-sample .env
+   # Edit .env with your settings
    go run main.go
    ```
 
@@ -189,11 +195,13 @@ err := notification.SendNotification(config)
 
 Each service provides comprehensive Swagger/OpenAPI documentation:
 
-| Service                  | Local Docs                                               | Production Docs                                                              | Repository                                                    |
-| ------------------------ | -------------------------------------------------------- | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
-| **Gradely API v2**       | [http://localhost:8080/docs](http://localhost:8080/docs) | [https://api.gradely.ng/docs](https://api.gradely.ng/docs)                   | [📁 Repository](https://github.com/gradely/gradely-api)       |
-| **Gradely-2.1**          | [http://localhost:8081/docs](http://localhost:8081/docs) | [https://api.gradely.ng/docs](https://api.gradely.ng/docs)                   | [📁 Repository](https://github.com/gradely/gradely-2.1)       |
-| **Notification Service** | [http://localhost:8080/docs](http://localhost:8080/docs) | [https://notification.gradely.co/docs](https://notification.gradely.co/docs) | [📁 Repository](https://github.com/gradely/notification-v2.1) |
+| Service                  | Local Docs                                                             | Production Docs                                                              | Repository                                                    |
+| ------------------------ | ---------------------------------------------------------------------- | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| **Gradely API v2**       | [http://localhost:<your-port>/docs](http://localhost:<your-port>/docs) | [https://api.gradely.ng/docs](https://api.gradely.ng/docs)                   | [📁 Repository](https://github.com/gradely/gradely-api)       |
+| **Gradely-2.1**          | [http://localhost:<your-port>/docs](http://localhost:<your-port>/docs) | [https://api.gradely.ng/docs](https://api.gradely.ng/docs)                   | [📁 Repository](https://github.com/gradely/gradely-2.1)       |
+| **Notification Service** | [http://localhost:<your-port>/docs](http://localhost:<your-port>/docs) | [https://notification.gradely.co/docs](https://notification.gradely.co/docs) | [📁 Repository](https://github.com/gradely/notification-v2.1) |
+
+> **Note:** Replace `<your-port>` with the port configured in your `.env` file for each service.
 
 ## 🔐 Authentication
 
@@ -234,7 +242,7 @@ The notification service supports multiple channels and user types:
 ### Shared Databases
 
 - **MySQL**: Primary data storage
-- **Redis**: Caching and session management
+- **Redis**: Caching and session management (only Gradely-2.1 connects)
 
 ### Database Separation
 
@@ -254,8 +262,8 @@ The notification service supports multiple channels and user types:
 
 Each service has its own configuration:
 
-- **Gradely-2.1**: `config.yml`
-- **Notification Service**: `config.yml`
+- **Gradely-2.1**: `.env`
+- **Notification Service**: `.env`
 - **Gradely API v2**: `config/var.php`
 
 ## 🤝 Contributing
