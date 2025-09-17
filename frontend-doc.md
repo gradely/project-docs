@@ -38,7 +38,7 @@ graph TD
     Auth --> TutorCheck{Tutor/School?}
     
     StudentCheck -->|Yes| Learn[📚 Learn App<br/>Student Dashboard<br/>Route: /learn]
-    TutorCheck -->|Yes| Base[🏫 Base App<br/>Tutor/School Dashboard<br/>Port: 8085<br/>Route: /base]
+    TutorCheck -->|Yes| Base[🏫 Base App<br/>Tutor/School Dashboard<br/>Port: 8083<br/>Route: /base]
     
     %% Student Journey
     Learn --> LearnAPI[🌐 API v2/v2.1<br/>Student Data]
@@ -203,7 +203,7 @@ cd auth-app
 npm install
 cd ..
 
-# Base App (Port 8085) 
+# Base App (Port 8083) 
 cd base-app
 npm install
 cd ..
