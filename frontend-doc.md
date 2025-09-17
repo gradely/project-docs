@@ -6,7 +6,7 @@ Gradely is a complete LMS for schools, teachers, parents, and students. Features
 
 ### Technology Stack
 - **Framework**: Single-SPA
-- **Frontend**: Vue.js + Vue Router + Vuex
+- **Frontend**: Vue.js + Vue Router + Vuex (Auth app runs on Nuxt + Pinia)
 - **Backend**: Microservices (REST APIs v2 & v2.1)
 - **Authentication**: JWT tokens
 - **Deployment**: AWS S3 + CloudFront
@@ -168,7 +168,105 @@ graph TD
 ## 🚀 Development & Deployment
 
 ### Local Development
-- **Port Configuration**: Auth (3000), Learn (8098), Assessment (8096), Base (8093), LMS (8092)
+
+#### Prerequisites
+- **Node.js** (v14+ recommended)
+- **Git**
+- **npm** 
+
+#### 1. Clone All Repositories
+
+First, create a workspace directory and clone all the required repositories:
+
+```bash
+# Create workspace
+mkdir gradely-workspace
+cd gradely-workspace
+
+# Clone all  apps
+git clone https://github.com/gradely/gradely-app-auth.git - auth-app
+git clone https://github.com/gradely/gradely-base-app-2.1.git - base-app
+git clone https://github.com/gradely/lesson-app.git  - learn-app
+git clone https://github.com/gradely/student-assessment.git - assessment-app
+git clone https://github.com/gradely/lms.git - lms-app
+```
+
+**Important**: The applications require the Gradely backend services to be running. [See backend documentation](https://github.com/gradely/project-docs).
+
+#### 2. Install Dependencies
+
+Navigate to each app directory and install dependencies:
+
+```bash
+# Auth App (Port 3000)
+cd auth-app
+npm install
+cd ..
+
+# Base App (Port 8085) 
+cd base-app
+npm install
+cd ..
+
+# Learn App (Port 8098)
+cd learn-app
+npm install
+cd ..
+
+# Assessment App (Port 8096)
+cd assessment-app
+npm install
+cd ..
+
+# LMS App (Port 8092)
+cd lms-app
+npm install
+cd ..
+```
+
+#### 3. Environment Configuration
+
+Each app needs environment configuration. Add `env.js` in the `src` folder for each app except Auth, add its at the `root`:
+
+```bash
+# Example environment variables
+export const API_VERSION = "v2";
+export const API_BASE_URL = "";
+export const NEW_API_VERSION = "v2.1";
+export const NEW_API_BASE_URL = "";
+```
+
+#### 4. Start Development Servers
+
+Open separate terminal windows for each app:
+
+```bash
+# Terminal 1 - Auth App (Port 3000)
+cd auth-app
+npm run dev
+# Should be available at http://localhost:3000
+
+# Terminal 2 - Base App (Port 8093)
+cd base-app  
+npm run serve
+# Should be available at http://localhost:8093
+
+# Terminal 3 - Learn App (Port 8098)
+cd learn-app
+npm run serve
+# Should be available at http://localhost:8098
+
+# Terminal 4 - Assessment App (Port 8096)
+cd assessment-app
+npm run serve
+# Should be available at http://localhost:8096
+
+# Terminal 5 - LMS App (Port 8092)
+cd lms-app
+npm run serve
+# Should be available at http://localhost:8092
+```
+
 - **Independent Development**: Each app runs separately
 - **Environment Variables**: Centralized configuration via env.js
 
