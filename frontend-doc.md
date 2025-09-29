@@ -38,7 +38,7 @@ graph TD
     Auth --> TutorCheck{Tutor/School?}
     
     StudentCheck -->|Yes| Learn[📚 Learn App<br/>Student Dashboard<br/>Route: /learn]
-    TutorCheck -->|Yes| Base[🏫 Base App<br/>Tutor/School Dashboard<br/>Port: 8083<br/>Route: /base]
+    TutorCheck -->|Yes| Base[🏫 Base App<br/>Tutor/School Dashboard<br/>Port: 8093<br/>Route: /base]
     
     %% Student Journey
     Learn --> LearnAPI[🌐 API v2/v2.1<br/>Student Data]
@@ -170,7 +170,7 @@ graph TD
 ### Local Development
 
 #### Prerequisites
-- **Node.js** (v14+ recommended)
+- **Node.js** (v14+ recommended). You can also find the exact version of node needed to run each app in the github workflow file.
 - **Git**
 - **npm** 
 
@@ -201,27 +201,22 @@ Navigate to each app directory and install dependencies:
 # Auth App (Port 3000)
 cd auth-app
 npm install
-cd ..
 
-# Base App (Port 8083) 
+# Base App (Port 8093) 
 cd base-app
 npm install
-cd ..
 
 # Learn App (Port 8098)
 cd learn-app
 npm install
-cd ..
 
 # Assessment App (Port 8096)
 cd assessment-app
 npm install
-cd ..
 
 # LMS App (Port 8092)
 cd lms-app
 npm install
-cd ..
 ```
 
 #### 3. Environment Configuration
@@ -229,42 +224,72 @@ cd ..
 Each app needs environment configuration. Add `env.js` in the `src` folder for each app except Auth, add its at the `root`:
 
 ```bash
-# Example environment variables
+# Environment variables
+export const APP_NAME = "Gradely";
 export const API_VERSION = "v2";
 export const API_BASE_URL = "";
 export const NEW_API_VERSION = "v2.1";
 export const NEW_API_BASE_URL = "";
+export const APP_BASE_URL = "https://baseapp.gradely.co";
+export const OLD_APP_BASE_URL = "https://baseapp.gradely.co";
+export const REFERRAL_BASE_URL = "";
+export const TOPIC_BASE_URL = "";
+export const MIX_PANEL_TOKEN = "";
+export const BASE_DEV_URL = "http://localhost:";
+export const environment = process.env.NODE_ENV;
+export const LOGIN_URL = {
+  dev: BASE_DEV_URL + "8093/auth/login",
+  prod: APP_BASE_URL + "/auth/login",
+};
+export const LANDER_URL = {
+  dev: BASE_DEV_URL + "8093/auth",
+  prod: APP_BASE_URL + "/auth",
+};
+const environmentBase = () =>
+  environment === "development" ? BASE_DEV_URL : APP_BASE_URL;
+const oldEnvironmentBase = () =>
+  environment === "development" ? BASE_DEV_URL : OLD_APP_BASE_URL;
+export const EXTERNAL_URL = (app, path) => {
+  let getPort = environment === "development" ? generateAppPort(app) : "";
+  return `${environmentBase()}${getPort}/${app}${path}`;
+};
+export const REDIRECT_TO_APP = (account, path) => {
+  let getPort = environment === "development" ? "8085" : "";
+  return oldEnvironmentBase() + getPort + "/app/" + account + "/" + path;
+};
 ```
 
 #### 4. Start Development Servers
 
 Open separate terminal windows for each app:
 
+> Each app can run independently. For local testing, you don’t need the Auth app — every app has a `/dev-login` route that allows you to log in with test credentials. This will seed localStorage with tokens and user data.
+
 ```bash
 # Terminal 1 - Auth App (Port 3000)
 cd auth-app
 npm run dev
-# Should be available at http://localhost:3000
+# Available at http://localhost:3000
 
 # Terminal 2 - Base App (Port 8093)
 cd base-app  
 npm run serve
-# Should be available at http://localhost:8093
+# Available at http://localhost:8093
 
 # Terminal 3 - Learn App (Port 8098)
 cd learn-app
 npm run serve
-# Should be available at http://localhost:8098
+# Available at http://localhost:8098
 
 # Terminal 4 - Assessment App (Port 8096)
 cd assessment-app
 npm run serve
-# Should be available at http://localhost:8096
+# Available at http://localhost:8096
 
 # Terminal 5 - LMS App (Port 8092)
 cd lms-app
 npm run serve
-# Should be available at http://localhost:8092
+# Available at http://localhost:8092
 ```
 
 - **Independent Development**: Each app runs separately
