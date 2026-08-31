@@ -11,6 +11,7 @@ The **verified** documents cite the repository branch and source path used to es
 - [Frontend and AI boundaries](docs/frontend-ai-boundaries.md)
 - [Verification register and prioritised review backlog](docs/verification-register.md)
 - [Legacy micro-frontend map](docs/legacy-microfrontend-map.md)
+- [Branch, pull request, and ticket workflow](docs/branch-pr-ticket-workflow.md)
 
 ## Using this repository
 
@@ -28,4 +29,4 @@ Earlier backend and frontend guides are preserved because they contain useful co
 
 ## Contribution guidance
 
-See [AGENTS.md](AGENTS.md) for the documentation verification and contribution rules.
+See [AGENTS.md](AGENTS.md) for documentation verification and contribution rules.
