@@ -4,7 +4,7 @@
 
 ## Current web monorepo — `gradely-web-v3.1`
 
-**Verified branch:** `dev`  
+**Verified branch:** `dev`
 **Stack:** Vue 3, TypeScript, Vite, Tailwind, Turborepo, npm workspaces.
 
 The monorepo contains two applications:
@@ -43,7 +43,7 @@ The historical composition map is retained in [legacy-microfrontend-map.md](lega
 
 ### Diagnostic engine — `gradely-diagnostic-engine`
 
-**Verified branch:** `main`  
+**Verified branch:** `main`
 **Stack:** Python 3.12+, FastAPI.
 
 This is a standalone grading/diagnostic API with a versioned HTTP integration contract. Gradely retains ownership of authentication, submissions, question records, durable grades, and learner records; the engine produces diagnostic/grading evidence and learning-plan outputs. It does not share the core Gradely database.
@@ -52,7 +52,7 @@ Source evidence: `README.md` and `INTEGRATION.md`.
 
 ### AI tutor MVP — `gradely-ai-tutor-mvp`
 
-**Verified branch:** `main`  
+**Verified branch:** `main`
 **Stack:** Next.js, TypeScript, Prisma 7, PostgreSQL, Vercel AI SDK/OpenRouter.
 
 This is a separate MVP with its own persistence and AI integration. It should not be treated as an implementation detail of the core Go API or diagnostic engine unless a specific network/API contract is verified.
