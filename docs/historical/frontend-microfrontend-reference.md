@@ -2,7 +2,7 @@
 
 > Status: retained for historical context. This document contains useful descriptions of the legacy micro-frontend estate, but it includes assumptions that have **not** all been verified against current repositories or deployments. Use the verified architecture documents for current guidance; do not treat local-storage, Single-SPA, ports, build, deployment, or API behavior here as a current contract.
 
-Original material follows unchanged for reference.
+Original material follows with only whitespace normalisation for repository hygiene; its substantive content is preserved.
 
 ---
 
@@ -29,98 +29,98 @@ Gradely is a complete LMS for schools, teachers, parents, and students. Features
 | **Assessment** | Homework/Quiz/Exam Platform | Students/Teachers | `/assessment` | [https://github.com/gradely/student-assessment](https://github.com/gradely/student-assessment) |
 | **LMS** | Learning Management System | Schools/Teachers | `/lms` | [https://github.com/gradely/lms](https://github.com/gradely/lms) |
 
-# 
+#
 > The diagram below shows how our micro applications communicate...
 
 ```mermaid
 graph TD
     %% User Entry Points
     User[👤 User] --> Auth[🔐 Auth App<br/>Port: 8095<br/>Route: /auth]
-    
+
     %% Authentication Flow
     Auth --> AuthAPI[🌐 Auth API v2<br/>JWT Authentication]
     AuthAPI --> LS1[(📦 Local Storage<br/>- auth_token<br/>- refresh_token<br/>- user_profile<br/>- user_preferences)]
-    
+
     %% Role-based Routing
     Auth --> StudentCheck{Student?}
     Auth --> TutorCheck{Tutor/School?}
-    
+
     StudentCheck -->|Yes| Learn[📚 Learn App<br/>Student Dashboard<br/>Route: /learn]
     TutorCheck -->|Yes| Base[🏫 Base App<br/>Tutor/School Dashboard<br/>Port: 8093<br/>Route: /base]
-    
+
     %% Student Journey
     Learn --> LearnAPI[🌐 API v2/v2.1<br/>Student Data]
     LearnAPI --> LS2[(📦 Local Storage<br/>Read/Write)]
     Learn --> SS1[(💾 Session Storage<br/>Cached Recommendations)]
-    
+
     Learn --> LiveClass{Click Live Class}
     Learn --> TakeAssessment{Take Assessment}
-    
+
     LiveClass --> Base
     TakeAssessment --> Assessment[📝 Assessment App<br/>Homework/Quiz/Exam<br/>Route: /assessment]
-    
+
     %% Tutor Journey
     Base --> BaseAPI[🌐 API v2/v2.1<br/>Tutor/School Data]
     BaseAPI --> LS3[(📦 Local Storage<br/>Read/Write)]
-    
+
     Base --> CreateClass[➕ Create Live Class]
     Base --> CreateAssessment[➕ Create Assessment]
-    
+
     CreateClass --> BaseData[📊 Store Class Data]
     CreateAssessment --> LMS[🎓 LMS App<br/>Learning Management<br/>Route: /lms]
-    
+
     %% LMS Flow
     LMS --> LMSAPI[🌐 API v2/v2.1<br/>LMS Data]
     LMSAPI --> LS4[(📦 Local Storage<br/>Read/Write)]
-    
+
     %% Assessment Flow
     Assessment --> AssessmentAPI[🌐 API v2/v2.1<br/>Assessment Data]
     AssessmentAPI --> LS5[(📦 Local Storage<br/>Read/Write)]
-    
+
     %% External Integration
     Base --> ValidateClass[Validate live class]--> BBB[🎥 Big Blue Button<br/>External Live Class Platform]
-    
+
     %% Data Synchronization
     LS1 -.->|Storage Events| LS2
     LS2 -.->|Storage Events| LS3
     LS3 -.->|Storage Events| LS4
     LS4 -.->|Storage Events| LS5
     LS5 -.->|Storage Events| LS1
-    
+
     %% Shared Assets
     SharedAssets[📁 Shared Assets Library<br/>- Fonts, Icons, Images<br/>- SCSS Variables] -.-> Auth
-    SharedAssets -.-> Base  
+    SharedAssets -.-> Base
     SharedAssets -.-> Learn
     SharedAssets -.-> Assessment
     SharedAssets -.-> LMS
-    
+
     %% Vuex Stores
     AuthStore[🗃️ Auth Vuex Store]
     BaseStore[🗃️ Base Vuex Store]
     LearnStore[🗃️ Learn Vuex Store]
     AssessmentStore[🗃️ Assessment Vuex Store]
     LMSStore[🗃️ LMS Vuex Store]
-    
+
     Auth --> AuthStore
     Base --> BaseStore
     Learn --> LearnStore
     Assessment --> AssessmentStore
     LMS --> LMSStore
-    
+
     %% Single-SPA Root
     SingleSPA[⚡ Single-SPA Root Config<br/>Route Management] --> Auth
     SingleSPA --> Base
     SingleSPA --> Learn
     SingleSPA --> Assessment
     SingleSPA --> LMS
-    
+
     %% Styling
     classDef appStyle fill:#e1f5fe,stroke:#01579b,stroke-width:2px
     classDef storageStyle fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
     classDef apiStyle fill:#e8f5e8,stroke:#2e7d32,stroke-width:2px
     classDef externalStyle fill:#fff3e0,stroke:#e65100,stroke-width:2px
     classDef decisionStyle fill:#fce4ec,stroke:#c2185b,stroke-width:2px
-    
+
     class Auth,Base,Learn,Assessment,LMS appStyle
     class LS1,LS2,LS3,LS4,LS5,SS1 storageStyle
     class AuthAPI,LearnAPI,BaseAPI,LMSAPI,AssessmentAPI apiStyle
@@ -180,7 +180,7 @@ graph TD
 #### Prerequisites
 - **Node.js** (v14+ recommended). You can also find the exact version of node needed to run each app in the github workflow file.
 - **Git**
-- **npm** 
+- **npm**
 
 #### 1. Clone All Repositories
 
@@ -210,7 +210,7 @@ Navigate to each app directory and install dependencies:
 cd auth-app
 npm install
 
-# Base App (Port 8093) 
+# Base App (Port 8093)
 cd base-app
 npm install
 
@@ -280,7 +280,7 @@ npm run dev
 # Available at http://localhost:3000
 
 # Terminal 2 - Base App (Port 8093)
-cd base-app  
+cd base-app
 npm run serve
 # Available at http://localhost:8093
 
