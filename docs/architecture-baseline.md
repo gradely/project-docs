@@ -1,18 +1,19 @@
 # Gradely architecture baseline
 
-> Status: initial verified map, based on the default branch of the actively maintained repositories. Update this document in the same pull request as any cross-repository contract change.
+> Status: source-backed map reviewed against the active Gradely v2.1 implementation branch, `release/3.0.0`, on 2026-08-31. For the other repositories, the named branch is the repository branch inspected for that boundary. Re-check the active release branch before implementation.
 
 ## Source of truth
 
 - This repository holds cross-repository architecture and integration notes.
 - Each service or app owns its implementation details, local tests, and deployment configuration.
 - Do not infer an API contract from a frontend alone. Confirm it in the owning backend route, controller, and service.
+- The Git default branch is not necessarily the implementation PR base. See [branch, pull request, and ticket workflow](branch-pr-ticket-workflow.md).
 
 ## Active repository map
 
-| Repository | Default branch | Role | Primary stack |
+| Repository | Source branch reviewed | Role | Primary stack |
 |---|---|---|---|
-| `gradely-2.1` | `dev` | Core v2.1 API and learning domain | Go, Gin, MySQL, Redis |
+| `gradely-2.1` | `release/3.0.0` | Core v2.1 API and learning domain | Go, Gin, MySQL, Redis |
 | `notification-v2.1` | `dev` | Notification service | Go, Gin |
 | `gradely-web-v3.1` | `dev` | Unified Learn and Tutor web monorepo | Vue 3, TypeScript, Vite, Turborepo |
 | `gradely-app-auth` | `dev` | Authentication micro-frontend | Vue 2 |
@@ -27,22 +28,23 @@
 | `landing-page` | `dev` | Marketing site | Nuxt 3, Prisma |
 | `gradely-api` | `master` | Legacy v2 API | PHP, Yii2 |
 | `gradely1` | `master` | Legacy Gradely v1 | PHP, Yii |
-| `frontend-project-docs` | `main` | Cross-repository architecture documentation | Markdown |
+| `frontend-project-docs` | `main` | Frontend-specific documentation | Markdown |
+| `project-docs` | `main` | Cross-repository architecture documentation | Markdown |
 
 ## Critical flow: recommendation streak
 
 The current implementation is owned by `gradely-2.1`.
 
-1. A student submits a recommendation practice.
-2. The catch-up assessment service marks `learning_recommendation_receiver.is_taken = 1`.
-3. When `IsEndOfRecommendationSet` returns true, the service runs `triggerEndRecommendationSetEvents`.
-4. `UpdateLearningRecommendationStreakCount` updates the student's `user_profile.extras` JSON:
-   - activity on the previous day increments the streak;
-   - activity already recorded today preserves the count;
-   - any longer gap starts a new streak at 1;
-   - the completion-date history is capped at 31 entries.
-5. Authenticated clients read the value through:
-   `GET /{apiVersion}/report/student-streak-count`.
+1. Practice-assessment submission with a `RecommendationId` marks `learning_recommendation_receiver.is_taken = 1`.
+2. If that recommendation represents the end of its set, an asynchronous callback records the recommendation end date and sends the subscription prompt. This callback is **not** the streak increment.
+3. The assessment path then updates the student's cached recommendation list. When every item in that cached list is marked taken, it calls `UpdateLearningRecommendationStreakCount`.
+4. Video-resource completion has the analogous path: it marks the receiver row complete, updates the cached recommendation list, and updates the streak only when all cached items are taken.
+5. `UpdateLearningRecommendationStreakCount` writes `user_profile.extras`:
+   - completion on the previous day increments the streak;
+   - completion already recorded today preserves the count;
+   - a longer gap starts a new streak at 1;
+   - completion-date history is capped at 31 entries.
+6. Authenticated clients can read the current display count through `GET /v2.1/report/student-streak-count`. The companion `GET /v2.1/report/student-streak` returns the count plus the current week's completion marks. An inactive read returns a display count of 0; the read path does not persist that reset.
 
 Implementation path:
 
@@ -52,12 +54,17 @@ pkg/router/report_url.go
   → service/report/student_profile_report.go
 
 service/catchup/assessment.go
-  → mark recommendation complete
-  → test end of set
-  → update streak and profile extras
+  → complete practice recommendation
+  → update cached recommendation list
+  → update streak when all items are complete
+
+service/catchup/resources.go
+  → complete video recommendation
+  → update cached recommendation list
+  → update streak when all items are complete
 ```
 
-Do not move this logic into a frontend. Any change to streak semantics must include backend tests for same-day, next-day, and missed-day behavior.
+Do not move this logic into a frontend. Any change to streak semantics must include backend tests for same-day, next-day, missed-day, and both practice and video completion behavior.
 
 ## Service boundary: diagnostic engine
 
@@ -65,7 +72,7 @@ Do not move this logic into a frontend. Any change to streak semantics must incl
 
 ## Working conventions
 
-- Preserve the owning repository's default branch unless a task explicitly targets another branch.
+- Preserve the owning repository's target branch unless a task explicitly targets another branch.
 - Make cross-repository changes as small, reviewable pull requests. Link dependent PRs and document contract/rollout order.
 - For `gradely-2.1`, trace API changes as route → controller → service → persistence/cache, and add or update tests for business rules.
 - Do not expose production credentials, private learner data, or database dumps in issues, docs, fixtures, or prompts.
