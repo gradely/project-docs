@@ -13,6 +13,7 @@ This repository records cross-repository facts, integration contracts, critical 
 
 ## Change discipline
 
+- Follow the [branch, pull request, and ticket workflow](docs/branch-pr-ticket-workflow.md).
 - Update shared docs in the same PR as cross-repository contract changes.
 - Link dependent implementation PRs and state rollout/rollback order where applicable.
 - Keep historical context accessible, but never present it as a verified current contract.
