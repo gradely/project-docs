@@ -4,16 +4,23 @@ This is the default workflow for Gradely implementation changes. A repository ma
 
 ## Branch naming
 
-Use a concise underscore-separated description.
+Gradely's existing branches use a mixture of underscore and hyphen separators. Preserve the established style of the relevant repository or the exact branch name supplied for a task; do not rename an existing convention merely for consistency.
 
-- **Ticket-linked work:** `<ticket-key>_<short_task_name>`
-  - Examples: `GS-1005_student_reschedule_tutoring_class`, `GA-84_provide_vdl_callback_url`
-- **Ticketless work:** `<short_task_name>`
-  - Example: `use_websocket_to_improve_tutoring_experience_2`
+- **Ticket-linked work:** start with the exact ticket key, followed by a concise task description.
+  - Common examples: `GS-1005_student_reschedule_tutoring_class`, `GA-84_provide_vdl_callback_url`
+  - Other existing forms, such as `729-use_websocket_to_imporove_tutoring_experience_2`, are valid historical conventions and must be preserved when referenced.
+- **Ticketless work:** use a concise task description.
+  - Example: `add_homework_indexes`
 
 A ticket key is optional and is not limited to `GS`; preserve the exact key supplied for the work. Add a numeric suffix only when it is necessary to distinguish a follow-up branch.
 
 Do not invent a ticket key, alter an existing key, or create a branch from an assumed ticket. If a task arrives without a key and it has not been stated to be a ticketless quick fix, ask whether it should be linked to Jira before creating the branch.
+
+## Base branches
+
+Confirm the target base branch for every task; do not infer it from the currently checked-out local branch.
+
+For `gradely-2.1`, the remote default branch is `dev`. Release branches are explicit targets and must only be used when the task calls for that release line. Apply the same check in each repository before opening a PR.
 
 ## Pull requests
 
