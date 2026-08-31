@@ -18,9 +18,17 @@ Do not invent a ticket key, alter an existing key, or create a branch from an as
 
 ## Base branches
 
-Confirm the target base branch for every task; do not infer it from the currently checked-out local branch.
+Confirm the target base branch for every task; do not infer it from the currently checked-out local branch or from a repository's Git default branch.
 
-For `gradely-2.1`, the remote default branch is `dev`. Release branches are explicit targets and must only be used when the task calls for that release line. Apply the same check in each repository before opening a PR.
+For `gradely-2.1`, normal implementation PRs currently target the latest active release branch: **`release/3.0.0`**. This was verified from refreshed remote refs on 2026-08-31; the branch had current work and production tags through `azure-prod-v3.0.6`. Although the repository's remote default branch is `dev`, it is not the default PR target for this workflow.
+
+Before creating a branch or PR:
+
+1. fetch the repository's remote refs;
+2. identify the newest active release branch;
+3. use that branch as the base unless the task explicitly targets another release line, `dev`, or an emergency/hotfix path.
+
+Re-check this rule when a new release line becomes active; never hard-code `release/3.0.0` as permanent policy.
 
 ## Pull requests
 
@@ -37,7 +45,7 @@ A ticket is not mandatory. When a task is explicitly ticketless, use the ticketl
 ## Before starting implementation
 
 1. Read the central architecture reference and the owning repository’s local guidance.
-2. Confirm the intended target branch.
+2. Fetch remote refs and confirm the active target release branch.
 3. Determine whether a ticket key is supplied.
 4. If no key is supplied, ask whether the change is ticketless before creating a branch.
 5. Trace the affected behavior in source and identify tests before editing.
