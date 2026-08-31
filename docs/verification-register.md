@@ -16,9 +16,9 @@ A statement is **verified** only when the named default branch and source path w
 
 | Area | Verified fact | Evidence |
 |---|---|---|
-| Core API | `gradely-2.1` is a Go/Gin v2.1 API registering auth, student, report, catch-up, notification, feed, exams, cron, and websocket route groups. | `gradely-2.1/pkg/router/router.go` |
-| Streak | Completion of a recommendation set updates the student's persisted streak data; authenticated read endpoint is under the report router. | `gradely-2.1/service/catchup/assessment.go`, `pkg/router/report_url.go`, `service/report/student_profile_report.go` |
-| Core dependencies | Local v2.1 services include MySQL and Redis. | `gradely-2.1/services.yml` |
+| Core API | `gradely-2.1` is a Go/Gin v2.1 API registering auth, student, report, catch-up, notification, feed, exams, cron, and websocket route groups. | `gradely-2.1` `release/3.0.0`, `pkg/router/router.go` |
+| Streak | Practice-assessment and video-resource recommendation completion update cached recommendations; the persisted streak updates when all cached items are complete. Authenticated read endpoints are under the report router. | `gradely-2.1` `release/3.0.0`, `service/catchup/assessment.go`, `service/catchup/resources.go`, `pkg/router/report_url.go`, `service/report/student_profile_report.go` |
+| Core dependencies | Local v2.1 services include MySQL and Redis. | `gradely-2.1` `release/3.0.0`, `services.yml` |
 | Notifications | Notification service has database, email, SMS/WhatsApp, Firebase configuration and template/delivery packages. | `notification-v2.1/config-sample.yml`, `notification/`, `service/` |
 | Notifications | Notification request handlers are registered without an auth middleware at that router group in source. | `notification-v2.1/pkg/router/router.go`, `controller/index.go` |
 | Modern web | The web monorepo has Learn and Tutor apps with shared-auth and explicit cross-app role handoffs. | `gradely-web-v3.1/apps/learn/src/main.ts`, `apps/tutor/src/main.ts` |
