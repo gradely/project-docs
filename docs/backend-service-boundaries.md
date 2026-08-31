@@ -4,7 +4,7 @@
 
 ## Core v2.1 API — `gradely-2.1`
 
-**Verified branch:** `dev`  
+**Current implementation reference:** `release/3.0.0` (the repository Git default remains `dev`).
 **Stack:** Go, Gin, MySQL, Redis; S3, OAuth, AI client, event/websocket support are initialised by the application.
 
 The core API is the current owner of the v2.1 learning domain. Its router registers modules for general, authentication, school, teacher, student, invite, parent, campaign, payment, report, catch-up, summer school, feed, notification, partner, exams, cron, extract, and websockets.
@@ -22,7 +22,7 @@ For a core API change, trace **route → controller → service → persistence/
 
 ## Notification service — `notification-v2.1`
 
-**Verified branch:** `dev`  
+**Verified branch:** `dev`
 **Stack:** Go, Gin, database-backed notification work, Firebase, email, SMS/WhatsApp-provider configuration.
 
 The service owns notification creation/delivery routines and templates. Its router exposes the following service-version group:
@@ -48,7 +48,7 @@ The old `SecretConfig` handler is explicitly marked “TODO to be removed” in 
 
 ## PHP v2 API — `gradely-api`
 
-**Verified branch:** `master`  
+**Verified branch:** `master`
 **Stack:** PHP 7.4+/8, Yii 2 Basic application, AWS SDK, FFMpeg, BigBlueButton, Sentry.
 
 This is a legacy v2 API, separate from the Go v2.1 core. Its runtime config registers a `v2` module, stateless Yii user handling, JSON parsing, several database connections, and route lists assembled from distinct domain files (school, teacher, student, parent, learning, tutor, payment-adjacent utilities, exams, game, and summer).
@@ -63,7 +63,7 @@ The repository README is a stock Yii template and must not be relied upon for pr
 
 ## PHP v1 — `gradely1`
 
-**Verified branch:** `master`  
+**Verified branch:** `master`
 **Stack:** PHP 7.4+, Yii 2 Advanced application.
 
 This is the legacy Gradely v1 web application. It has separate frontend modules for students, teachers, parents, schools, and learning; it uses session/cookie-based frontend authentication rather than the stateless setup observed in `gradely-api`.
