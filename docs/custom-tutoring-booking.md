@@ -44,11 +44,13 @@ intent. `notification-v2.1` owns the invoice and booking lifecycle email/deliver
 handlers. Deploy notification action registration before enabling the core
 producer.
 
-The core schema chain is migrations 150–161, deliberately above current release
-migration 149. The catalogue and notification action scripts are reviewed manual
-configuration, not automatically applied migrations. Roll out to staging first,
-use only provider test mode, then verify MySQL/Redis state and notification/websocket
-delivery before production.
+The core schema chain is migrations 150–162, deliberately above release migration
+149. Core startup applies that chain automatically, including ID-independent
+catalogue configuration, and rejects startup on a real migration error. The
+notification schema/action registration remains a reviewed manual step because
+that separate database is outside the core migration runner. Roll out to staging
+first, use only provider test mode, then verify MySQL/Redis state and
+notification/websocket delivery before production.
 
 ## Source evidence
 
@@ -58,6 +60,6 @@ delivery before production.
 - Domain and provider settlement: `gradely-2.1/service/payment/`
 - Availability/pricing: `gradely-2.1/service/tutorsearch/`,
   `gradely-2.1/pkg/bookingprice/`
-- Schema: `gradely-2.1/db/migrations/main/000150_*` through `000161_*`
+- Schema: `gradely-2.1/db/migrations/main/000150_*` through `000162_*`
 - Notification handlers/templates: `notification-v2.1/notification/parent/`,
   `notification-v2.1/notification/teacher/`
