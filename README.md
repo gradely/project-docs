@@ -12,6 +12,7 @@ The **verified** documents cite the repository branch and source path used to es
 - [Verification register and prioritised review backlog](docs/verification-register.md)
 - [Legacy micro-frontend map](docs/legacy-microfrontend-map.md)
 - [Branch, pull request, and ticket workflow](docs/branch-pr-ticket-workflow.md)
+- [Custom tutoring booking and payment contract](docs/custom-tutoring-booking.md)
 
 ## Using this repository
 
